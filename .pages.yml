@@ -1,0 +1,131 @@
+# Pages CMS 설정 — https://app.pagescms.org 에서 이 저장소를 열면 아래 메뉴가 보입니다.
+media:
+  input: public/images
+  output: /images
+
+content:
+  - name: posts
+    label: 글
+    type: collection
+    path: src/content/posts
+    format: yaml-frontmatter
+    filename: "{year}-{month}-{day}-{fields.slug}.md"
+    view:
+      primary: title
+      fields: [title, category, date, draft]
+      sort: [date, title]
+      search: [title]
+      default:
+        sort: date
+        order: desc
+    fields:
+      - name: title
+        label: 제목
+        type: string
+        required: true
+      - name: slug
+        label: 주소 (영문 소문자와 하이픈, 예 ifc-outlet)
+        type: string
+        required: true
+      - name: date
+        label: 작성일
+        type: date
+        options:
+          format: yyyy-MM-dd
+      - name: category
+        label: 분류
+        type: select
+        required: true
+        options:
+          values: [정보통신설비, BIM · IFC, 정보요구체계, 현장 기록]
+      - name: summary
+        label: 한 줄 요약
+        type: text
+      - name: tags
+        label: 태그
+        type: string
+        list: true
+      - name: draft
+        label: 임시저장 (켜면 사이트에 안 보임)
+        type: boolean
+        default: false
+      - name: body
+        label: 본문
+        type: rich-text
+        options:
+          format: markdown
+          path: public/images
+
+  - name: about
+    label: 소개 페이지
+    type: file
+    path: src/content/pages/about.md
+    format: yaml-frontmatter
+    fields:
+      - name: title
+        label: 제목
+        type: string
+      - name: subtitle
+        label: 부제
+        type: string
+      - name: body
+        label: 본문
+        type: rich-text
+        options:
+          format: markdown
+          path: public/images
+
+  - name: settings
+    label: 사이트 설정
+    type: file
+    path: src/data/site.json
+    format: json
+    fields:
+      - name: siteName
+        label: 사이트 이름 (왼쪽 위 로고)
+        type: string
+      - name: title
+        label: 메인 제목
+        type: string
+      - name: subtitle
+        label: 메인 설명
+        type: string
+      - name: author
+        label: 이름
+        type: string
+      - name: role
+        label: 직함·분야 (이름 아래)
+        type: string
+      - name: photo
+        label: 프로필 사진
+        type: image
+      - name: email
+        label: 연락 이메일 (비우면 메뉴에서 숨김)
+        type: string
+      - name: github
+        label: GitHub 주소 (비우면 숨김)
+        type: string
+      - name: categories
+        label: 분류 (이름을 바꾸면 '글' 설정의 분류 목록도 같이 바꿔야 함)
+        type: object
+        list: true
+        fields:
+          - name: name
+            label: 이름
+            type: string
+          - name: slug
+            label: 주소 (영문)
+            type: string
+          - name: color
+            label: 아이콘 색 (예 #4A8CF0)
+            type: string
+          - name: icon
+            label: 아이콘
+            type: select
+            options:
+              values:
+                - { name: ict, label: 장비 }
+                - { name: bim, label: 큐브 }
+                - { name: ir, label: 체크리스트 }
+                - { name: camera, label: 카메라 }
+                - { name: note, label: 문서 }

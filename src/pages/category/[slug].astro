@@ -1,0 +1,15 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostGrid from '../../components/PostGrid.astro';
+import { getPosts, site } from '../../lib';
+
+export async function getStaticPaths() {
+  return site.categories.map((c) => ({ params: { slug: c.slug }, props: { cat: c } }));
+}
+const { cat } = Astro.props;
+const all = await getPosts();
+const posts = all.filter((p) => p.data.category === cat.name);
+---
+<Base title={cat.name} active={cat.slug}>
+  <PostGrid posts={posts} allPosts={all} heading={cat.name} sub={`${cat.name} 분류의 글 ${posts.length}개`} current={cat.slug} />
+</Base>

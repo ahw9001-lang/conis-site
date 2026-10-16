@@ -1,0 +1,42 @@
+---
+import PostCard from './PostCard.astro';
+import { site, type Post } from '../lib';
+interface Props { posts: Post[]; allPosts: Post[]; heading: string; sub: string; current: string }
+const { posts, allPosts, heading, sub, current } = Astro.props;
+const tabs = [
+  { label: '전체', href: '/', key: 'all', count: allPosts.length },
+  ...site.categories.map((c) => ({ label: c.name, href: `/category/${c.slug}/`, key: c.slug, count: allPosts.filter((p) => p.data.category === c.name).length })),
+];
+---
+<div class="page-head">
+  <div>
+    <h1>{heading}</h1>
+    <p>{sub}</p>
+  </div>
+</div>
+<nav class="tabs" aria-label="분류">
+  {tabs.map((t) => (
+    <a href={t.href} class="tab" aria-current={t.key === current ? 'page' : undefined}>{t.label}<span class="badge">{t.count}</span></a>
+  ))}
+</nav>
+<p class="search-note" id="search-note" hidden></p>
+{posts.length > 0
+  ? <div class="cards" id="cards">{posts.map((p) => <PostCard post={p} />)}</div>
+  : <div class="empty"><strong>아직 글이 없어요</strong><span>첫 글을 준비하고 있습니다.</span></div>}
+<p class="empty" id="no-match" hidden>검색어와 맞는 글이 없어요.</p>
+<script>
+  const q = new URLSearchParams(location.search).get('q')?.trim().toLowerCase() ?? '';
+  const input = document.getElementById('q') as HTMLInputElement | null;
+  if (input) input.value = q;
+  if (q) {
+    let shown = 0;
+    document.querySelectorAll<HTMLElement>('#cards .card').forEach((card) => {
+      const hit = (card.dataset.title ?? '').includes(q) || (card.dataset.tags ?? '').includes(q);
+      card.hidden = !hit;
+      if (hit) shown++;
+    });
+    const note = document.getElementById('search-note');
+    if (note) { note.hidden = false; note.textContent = `'${q}' 검색 결과 ${shown}개`; }
+    if (!shown) document.getElementById('no-match')?.removeAttribute('hidden');
+  }
+</script>

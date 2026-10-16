@@ -1,0 +1,9 @@
+---
+import Base from '../layouts/Base.astro';
+import PostGrid from '../components/PostGrid.astro';
+import { getPosts, site } from '../lib';
+const posts = await getPosts();
+---
+<Base active="all">
+  <PostGrid posts={posts} allPosts={posts} heading={site.title} sub={site.subtitle} current="all" />
+</Base>

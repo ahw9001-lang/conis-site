@@ -1,0 +1,70 @@
+---
+import '../styles/global.css';
+import Icon from '../components/Icon.astro';
+import { site } from '../lib';
+
+interface Props { title?: string; description?: string; active?: string }
+const { title, description = site.subtitle, active = '' } = Astro.props;
+const pageTitle = title ? `${title} · ${site.siteName}` : `${site.siteName} · ${site.author}의 ${site.title}`;
+const initial = site.author.slice(0, 1);
+---
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{pageTitle}</title>
+  <meta name="description" content={description} />
+  <meta property="og:title" content={pageTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:type" content="website" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <a class="skip" href="#content">본문으로 건너뛰기</a>
+  <header class="topbar">
+    <a href="/" class="brand">
+      <span class="brand-mark"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><circle cx="8" cy="8" r="3" stroke="#FFFFFF" stroke-width="1.8"></circle><path d="M8 1v3M8 12v3M1 8h3M12 8h3" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"></path></svg></span>
+      <span>{site.siteName}</span>
+    </a>
+    <form class="search" action="/" method="get" role="search">
+      <Icon name="search" size={18} width={2} />
+      <label for="q" class="sr-only">글 검색</label>
+      <input id="q" name="q" type="search" placeholder="글 검색…" autocomplete="off" />
+    </form>
+    <div class="profile">
+      {site.photo
+        ? <img src={site.photo} alt="" class="avatar" />
+        : <span class="avatar">{initial}</span>}
+      <span class="profile-text"><strong>{site.author}</strong><small>{site.role}</small></span>
+    </div>
+  </header>
+
+  <div class="shell">
+    <aside class="side">
+      <nav class="side-nav" aria-label="메뉴">
+        <a href="/" class="side-link" aria-current={active === 'all' ? 'page' : undefined}><Icon name="all" />전체 글</a>
+        {site.categories.map((c) => (
+          <a href={`/category/${c.slug}/`} class="side-link" aria-current={active === c.slug ? 'page' : undefined}><Icon name={c.icon} />{c.name}</a>
+        ))}
+        <a href="/about/" class="side-link" aria-current={active === 'about' ? 'page' : undefined}><Icon name="user" />소개</a>
+        {site.email && <a href={`mailto:${site.email}`} class="side-link"><Icon name="mail" />연락하기</a>}
+      </nav>
+      <div class="side-foot">
+        {site.github && <a href={site.github} class="side-link" rel="noopener"><Icon name="github" />GitHub</a>}
+        <a href="https://app.pagescms.org" class="side-link side-admin" rel="noopener"><Icon name="edit" />글 관리</a>
+      </div>
+    </aside>
+
+    <main id="content" class="main">
+      <div class="main-inner">
+        <slot />
+      </div>
+      <footer class="foot"><span>© {new Date().getFullYear()} {site.author} · conis.co.kr</span><a href="https://app.pagescms.org" rel="noopener">글 관리</a></footer>
+    </main>
+  </div>
+</body>
+</html>

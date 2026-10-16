@@ -1,0 +1,16 @@
+{
+  "siteName": "CONIS",
+  "title": "기술 노트",
+  "subtitle": "정보통신설비와 BIM 사이, 연구와 현장에서 정리한 글",
+  "author": "안희원",
+  "role": "정보통신 · BIM",
+  "photo": "",
+  "email": "",
+  "github": "https://github.com/ahw9001-lang",
+  "categories": [
+    { "name": "정보통신설비", "slug": "ict", "color": "#F7802F", "icon": "ict" },
+    { "name": "BIM · IFC", "slug": "bim", "color": "#4A8CF0", "icon": "bim" },
+    { "name": "정보요구체계", "slug": "ir", "color": "#1FB89A", "icon": "ir" },
+    { "name": "현장 기록", "slug": "field", "color": "#EC5B8C", "icon": "camera" }
+  ]
+}

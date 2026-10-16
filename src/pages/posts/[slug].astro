@@ -1,0 +1,51 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import { render } from 'astro:content';
+import { getPosts, categoryOf, fmtDate } from '../../lib';
+
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: { post, newer: posts[i - 1] ?? null, older: posts[i + 1] ?? null },
+  }));
+}
+const { post, newer, older } = Astro.props;
+const { Content, headings } = await render(post);
+const toc = headings.filter((h) => h.depth === 2);
+const cat = categoryOf(post.data.category);
+---
+<Base title={post.data.title} description={post.data.summary} active={cat.slug}>
+  <a href="/" class="back"><Icon name="arrow-left" size={16} />기술 노트 목록</a>
+
+  <section class="post-head">
+    <span class="card-icon big" style={`background:${cat.color};box-shadow:0 10px 20px ${cat.color}55`}><Icon name={cat.icon} size={26} stroke="#FFFFFF" width={1.8} /></span>
+    <h1>{post.data.title}</h1>
+    {post.data.summary && <p>{post.data.summary}</p>}
+    <div class="post-meta">
+      <a href={`/category/${cat.slug}/`}><Icon name="target" size={16} width={1.4} />{cat.name}</a>
+      <span><Icon name="clock" size={16} width={1.4} /><time datetime={post.data.date.toISOString()}>{fmtDate(post.data.date)}</time></span>
+      {post.data.tags.length > 0 && <span class="chips">태그 {post.data.tags.map((t) => <span class="chip">{t}</span>)}</span>}
+    </div>
+  </section>
+
+  <div class="post-body">
+    <article class="prose"><Content /></article>
+    {toc.length > 1 && (
+      <aside class="toc">
+        <span class="toc-title">목차</span>
+        <nav aria-label="목차">
+          {toc.map((h, i) => <a href={`#${h.slug}`}><span class="toc-num">{i + 1}</span>{h.text}</a>)}
+        </nav>
+      </aside>
+    )}
+  </div>
+
+  {(older || newer) && (
+    <nav class="pager" aria-label="이전·다음 글">
+      {older ? <a href={`/posts/${older.id}/`} class="pager-card"><span class="pager-dot" style={`background:${categoryOf(older.data.category).color}`}><Icon name="arrow-left" size={16} stroke="#FFFFFF" width={1.8} /></span><small>이전 글</small><strong>{older.data.title}</strong></a> : <span></span>}
+      {newer ? <a href={`/posts/${newer.id}/`} class="pager-card"><span class="pager-dot" style={`background:${categoryOf(newer.data.category).color}`}><Icon name="arrow-right" size={16} stroke="#FFFFFF" width={1.8} /></span><small>다음 글</small><strong>{newer.data.title}</strong></a> : <span></span>}
+    </nav>
+  )}
+</Base>

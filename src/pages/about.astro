@@ -1,0 +1,22 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import { getEntry, render } from 'astro:content';
+import { site } from '../lib';
+const about = await getEntry('pages', 'about');
+const rendered = about ? await render(about) : null;
+---
+<Base title="소개" active="about">
+  <section class="post-head">
+    <span class="card-icon big" style="background:#17A9CE;box-shadow:0 10px 20px #17A9CE55"><Icon name="user" size={26} stroke="#FFFFFF" width={1.8} /></span>
+    <h1>{about?.data.title ?? '소개'}</h1>
+    {about?.data.subtitle && <p>{about.data.subtitle}</p>}
+    <div class="post-meta">
+      {site.email && <a href={`mailto:${site.email}`}><Icon name="mail" size={16} width={1.4} />{site.email}</a>}
+      {site.github && <a href={site.github} rel="noopener"><Icon name="github" size={16} width={1.4} />GitHub</a>}
+    </div>
+  </section>
+  <div class="post-body">
+    <article class="prose">{rendered && <rendered.Content />}</article>
+  </div>
+</Base>
